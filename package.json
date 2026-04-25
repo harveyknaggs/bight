@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "sync": "tsx --env-file=.env.local scripts/sync-leads.ts",
-    "seed:clients": "tsx --env-file=.env.local scripts/seed-clients.ts"
+    "seed:clients": "tsx --env-file=.env.local scripts/seed-clients.ts",
+    "seed:websites": "tsx --env-file=.env.local scripts/seed-websites.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
