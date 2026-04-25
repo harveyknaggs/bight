@@ -1,31 +1,15 @@
 "use server";
 
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { signIn } from "@/auth";
 
 export async function sendMagicLink(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   if (!email) {
-    redirect("/login?error=missing-email");
+    throw new Error("Email is required");
   }
-
-  const supabase = await createClient();
-  const hdrs = await headers();
-  const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host");
-  const proto = hdrs.get("x-forwarded-proto") ?? "http";
-  const origin = `${proto}://${host}`;
-
-  const { error } = await supabase.auth.signInWithOtp({
+  await signIn("resend", {
     email,
-    options: {
-      emailRedirectTo: `${origin}/auth/callback`,
-    },
+    redirect: true,
+    redirectTo: "/",
   });
-
-  if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`);
-  }
-
-  redirect("/login?sent=1");
 }

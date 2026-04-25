@@ -5,18 +5,22 @@ Rapid Refresh CRM plus a small client portal.
 Internal tool for Harvey. Staff (Harvey) sees every lead, every demo site, and runs the pipeline.
 Clients log in and only see their own demo site.
 
-## What is in here (so far)
+## Stack
 
 - Next.js 16 (App Router, TypeScript, Tailwind v4)
 - shadcn/ui for components
-- Supabase (Postgres, Auth, Storage) wiring ready
-- SQL migrations with Row Level Security so clients never see each other
-- Magic-link login (one-time email code, no passwords)
+- Drizzle ORM
+- Postgres on Railway
+- Auth.js v5 with Resend (magic-link login)
+- Hosted on Railway
 
-## Data model (core tables)
+## Data model
 
-See `supabase/migrations/0001_init.sql`.
+See `src/db/schema.ts`.
 
+Auth tables (Auth.js): `users`, `accounts`, `sessions`, `verification_tokens`.
+
+CRM tables:
 - `niches` which niches you are working on
 - `leads` every business scraped
 - `websites` demo sites built
@@ -24,26 +28,32 @@ See `supabase/migrations/0001_init.sql`.
 - `outreach` cold emails sent
 - `clients` once a lead claims their site
 - `notes` free-form notes and client messages
-
-Plus `staff_users`, `reminders`, `activity` for extras.
+- `reminders`, `activity` extras
 
 ## Local setup
 
 ```bash
 npm install
-cp .env.example .env.local   # then fill in Supabase keys
+cp .env.example .env.local   # then fill in real values
 npm run dev
 ```
 
 Visit http://localhost:3000 and you should hit the login page.
 
-## Database setup
+To regenerate types after editing `src/db/schema.ts`:
+```bash
+npx drizzle-kit generate
+npx drizzle-kit migrate
+```
 
-See `supabase/README.md` for the full walk-through. Short version:
+## Access model
 
-1. Create a Supabase project.
-2. Paste each file in `supabase/migrations/` into the SQL editor, in order.
-3. Sign in to the app once, then add yourself to `staff_users` with SQL.
+There is no Postgres-level Row Level Security. All access is enforced in the app code:
+
+- `requireStaff()` in `src/lib/auth.ts` redirects non-staff away from `/dashboard`, `/leads`, etc.
+- `requireClient()` redirects staff away from the portal.
+- Every database query for client portal pages explicitly filters by `clients.userId = session.user.id`.
+- Staff role is granted via the `STAFF_EMAILS` env var on first sign-in.
 
 ## Repo
 

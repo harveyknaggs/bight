@@ -1,27 +1,34 @@
-import { createClient } from "@/lib/supabase/server";
+import { db } from "@/db";
+import { leads, websites, outreach, clients } from "@/db/schema";
+import { count, eq } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-async function countRows(table: string, filter?: { column: string; value: string }) {
-  const supabase = await createClient();
-  let query = supabase.from(table).select("*", { count: "exact", head: true });
-  if (filter) query = query.eq(filter.column, filter.value);
-  const { count } = await query;
-  return count ?? 0;
+async function countAll(table: typeof leads | typeof outreach) {
+  const [row] = await db.select({ n: count() }).from(table);
+  return row?.n ?? 0;
 }
 
 export default async function DashboardPage() {
-  const [totalLeads, sitesBuilt, emailsSent, clientsSignedUp] = await Promise.all([
-    countRows("leads"),
-    countRows("websites", { column: "status", value: "built" }),
-    countRows("outreach").catch(() => 0),
-    countRows("clients", { column: "plan", value: "paid" }).catch(() => 0),
+  const [totalLeads, sitesBuiltRow, emailsSent, payingClientsRow] = await Promise.all([
+    countAll(leads),
+    db
+      .select({ n: count() })
+      .from(websites)
+      .where(eq(websites.status, "built"))
+      .then((r) => r[0]?.n ?? 0),
+    countAll(outreach),
+    db
+      .select({ n: count() })
+      .from(clients)
+      .where(eq(clients.plan, "paid"))
+      .then((r) => r[0]?.n ?? 0),
   ]);
 
   const stats = [
     { label: "Total leads", value: totalLeads },
-    { label: "Demo sites built", value: sitesBuilt },
+    { label: "Demo sites built", value: sitesBuiltRow },
     { label: "Cold emails sent", value: emailsSent },
-    { label: "Paying clients", value: clientsSignedUp },
+    { label: "Paying clients", value: payingClientsRow },
   ];
 
   return (
@@ -51,9 +58,9 @@ export default async function DashboardPage() {
           <CardTitle>Next steps</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground space-y-2">
-          <p>1. Create your Supabase project and run the migrations in <code>supabase/migrations</code>.</p>
-          <p>2. Add yourself to <code>staff_users</code> (see <code>supabase/README.md</code>).</p>
-          <p>3. Hit the Import page to sync scraper output into the database.</p>
+          <p>1. Hit the Import page to sync scraper output into the database.</p>
+          <p>2. Walk a batch of 10 leads, mark each one reviewed.</p>
+          <p>3. Send the first cold email when a demo is ready.</p>
         </CardContent>
       </Card>
     </div>

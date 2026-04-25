@@ -1,12 +1,8 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { auth } from "@/auth";
 
 export default async function Home() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-
-  if (!data.user) redirect("/login");
-
-  const { data: isStaff } = await supabase.rpc("is_staff");
-  redirect(isStaff ? "/dashboard" : "/my-demo");
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  redirect(session.user.role === "staff" ? "/dashboard" : "/my-demo");
 }
