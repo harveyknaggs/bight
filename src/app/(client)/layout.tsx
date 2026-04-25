@@ -3,7 +3,7 @@ import { AppNav } from "@/components/app-nav";
 
 const clientNav = [
   { href: "/my-demo", label: "My demo site" },
-  { href: "/messages", label: "Messages" },
+  { href: "/profile", label: "Profile" },
 ];
 
 export default async function ClientLayout({ children }: { children: React.ReactNode }) {
