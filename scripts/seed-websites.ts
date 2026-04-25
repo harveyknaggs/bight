@@ -17,7 +17,7 @@ type SeedSpec = {
 const SEEDS: SeedSpec[] = [
   {
     folderSlug: "afg-barbers-studio",
-    demoUrl: "/my-site/v2/afg/",
+    demoUrl: "/my-site/v2/afg/index.html",
     templateUsed: "v2",
   },
 ];
