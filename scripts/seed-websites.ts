@@ -20,6 +20,11 @@ const SEEDS: SeedSpec[] = [
     demoUrl: "/my-site/v2/afg/index.html",
     templateUsed: "v2",
   },
+  {
+    folderSlug: "blackbeard-lounge-barbershop-in-rolleston",
+    demoUrl: "/my-site/v2/blackbeard/index.html",
+    templateUsed: "v2",
+  },
 ];
 
 async function seedOne(spec: SeedSpec) {
