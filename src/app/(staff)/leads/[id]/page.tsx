@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { leads, niches, reviews, websites, clients, notes } from "@/db/schema";
 import { eq, desc, count } from "drizzle-orm";
 import { LeadSheetProvider, SheetTrigger, type SheetCatalog } from "./sheet-client";
-import "./lead-detail.css";
 
 type Params = Promise<{ id: string }>;
 
@@ -449,7 +448,7 @@ export default async function LeadDetailPage({ params }: { params: Params }) {
   };
 
   return (
-    <div className="ld-root">
+    <>
       <LeadSheetProvider catalog={catalog} initialActive="scraped">
         <div className="ld-wrap">
           <Link className="ld-back" href="/leads">
@@ -850,7 +849,7 @@ export default async function LeadDetailPage({ params }: { params: Params }) {
           </div>
         </div>
       </LeadSheetProvider>
-    </div>
+    </>
   );
 }
 
