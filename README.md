@@ -11,7 +11,7 @@ Clients log in and only see their own demo site.
 - shadcn/ui for components
 - Drizzle ORM
 - Postgres on Railway
-- Auth.js v5 with Resend (magic-link login)
+- Auth.js v5 with email + password (Credentials provider, bcrypt hashes, JWT sessions)
 - Hosted on Railway
 
 ## Data model
@@ -53,7 +53,8 @@ There is no Postgres-level Row Level Security. All access is enforced in the app
 - `requireStaff()` in `src/lib/auth.ts` redirects non-staff away from `/dashboard`, `/leads`, etc.
 - `requireClient()` redirects staff away from the portal.
 - Every database query for client portal pages explicitly filters by `clients.userId = session.user.id`.
-- Staff role is granted via the `STAFF_EMAILS` env var on first sign-in.
+- Staff role is granted via the `STAFF_EMAILS` env var on signup.
+- Sign-up is open today (anyone can create an account); we will lock it down in a later phase.
 
 ## Repo
 

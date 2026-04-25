@@ -1,9 +1,9 @@
 import NextAuth, { type DefaultSession } from "next-auth";
-import Resend from "next-auth/providers/resend";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { accounts, sessions, users, verificationTokens } from "@/db/schema";
+import { users } from "@/db/schema";
 
 declare module "next-auth" {
   interface Session {
@@ -14,50 +14,62 @@ declare module "next-auth" {
   }
 }
 
-const STAFF_EMAILS = (process.env.STAFF_EMAILS ?? "")
-  .split(",")
-  .map((s) => s.trim().toLowerCase())
-  .filter(Boolean);
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }),
-  session: { strategy: "database" },
+  session: { strategy: "jwt" },
   trustHost: true,
   pages: {
     signIn: "/login",
-    verifyRequest: "/login?sent=1",
     error: "/login",
   },
   providers: [
-    Resend({
-      from: process.env.EMAIL_FROM ?? "onboarding@resend.dev",
-      apiKey: process.env.AUTH_RESEND_KEY ?? process.env.RESEND_API_KEY,
+    Credentials({
+      credentials: {
+        email: {},
+        password: {},
+      },
+      async authorize(creds) {
+        const email = String(creds?.email ?? "").trim().toLowerCase();
+        const password = String(creds?.password ?? "");
+        if (!email || !password) return null;
+
+        const [row] = await db
+          .select({
+            id: users.id,
+            email: users.email,
+            name: users.name,
+            passwordHash: users.passwordHash,
+            role: users.role,
+          })
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+
+        if (!row?.passwordHash) return null;
+        const ok = await bcrypt.compare(password, row.passwordHash);
+        if (!ok) return null;
+
+        return {
+          id: row.id,
+          email: row.email,
+          name: row.name ?? null,
+          role: row.role as "staff" | "client",
+        };
+      },
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
-      session.user.id = user.id;
-      // Pull role from DB; staff allowlist is enforced on user creation.
-      const [row] = await db
-        .select({ role: users.role })
-        .from(users)
-        .where(eq(users.id, user.id))
-        .limit(1);
-      session.user.role = (row?.role ?? "client") as "staff" | "client";
-      return session;
-    },
-  },
-  events: {
-    async createUser({ user }) {
-      // Promote to staff on first sign-in if email is on the allowlist.
-      if (user.email && user.id && STAFF_EMAILS.includes(user.email.toLowerCase())) {
-        await db.update(users).set({ role: "staff" }).where(eq(users.id, user.id));
+    async jwt({ token, user }) {
+      if (user) {
+        const u = user as { id: string; role: "staff" | "client" };
+        token.id = u.id;
+        token.role = u.role;
       }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user.id = token.id as string;
+      session.user.role = token.role as "staff" | "client";
+      return session;
     },
   },
 });
