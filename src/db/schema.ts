@@ -79,6 +79,15 @@ export const niches = pgTable(
     slug: text("slug").notNull(),
     status: text("status").notNull().default("queue"), // queue | in_progress | done
     createdAt: timestamp("created_at").notNull().defaultNow(),
+
+    // Niche-level "top demo": one shared flagship site sent to every lead in the niche.
+    topDemoUrl: text("top_demo_url"),
+    topDemoStage: text("top_demo_stage").notNull().default("not_started"),
+    // valid stages: not_started | building | reviewed | live
+    topDemoDesignAngle: text("top_demo_design_angle"),
+    topDemoReviewNotes: text("top_demo_review_notes"),
+    topDemoBuiltAt: timestamp("top_demo_built_at"),
+    topDemoReviewedAt: timestamp("top_demo_reviewed_at"),
   },
   (t) => [uniqueIndex("niches_city_slug_unique").on(t.city, t.slug)]
 );

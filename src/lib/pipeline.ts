@@ -76,3 +76,40 @@ export function prevStage(stage: PipelineStage): PipelineStage | null {
   if (i <= 0) return null;
   return PIPELINE_STAGES[i - 1];
 }
+
+// -----------------------------------------------------------------------------
+// Top-demo stages: the niche-level flagship site, separate from per-lead demos.
+// -----------------------------------------------------------------------------
+
+export const TOP_DEMO_STAGES = [
+  "not_started",
+  "building",
+  "reviewed",
+  "live",
+] as const;
+
+export type TopDemoStage = (typeof TOP_DEMO_STAGES)[number];
+
+export const TOP_DEMO_STAGE_LABELS: Record<TopDemoStage, string> = {
+  not_started: "Not started",
+  building: "Building",
+  reviewed: "Reviewed",
+  live: "Live",
+};
+
+export const TOP_DEMO_STAGE_COLORS: Record<
+  TopDemoStage,
+  { accent: string; accentSoft: string }
+> = {
+  not_started: { accent: "var(--c-purple)", accentSoft: "var(--c-purple-soft)" },
+  building: { accent: "var(--c-amber)", accentSoft: "var(--c-amber-soft)" },
+  reviewed: { accent: "var(--c-teal)", accentSoft: "var(--c-teal-soft)" },
+  live: { accent: "var(--brand-dark)", accentSoft: "var(--brand-soft)" },
+};
+
+export function isTopDemoStage(value: unknown): value is TopDemoStage {
+  return (
+    typeof value === "string" &&
+    (TOP_DEMO_STAGES as readonly string[]).includes(value)
+  );
+}

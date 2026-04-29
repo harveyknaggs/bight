@@ -6,9 +6,13 @@ import { leads, niches } from "@/db/schema";
 import {
   PIPELINE_STAGES,
   STAGE_LABELS,
+  TOP_DEMO_STAGE_COLORS,
+  TOP_DEMO_STAGE_LABELS,
   isPipelineStage,
+  isTopDemoStage,
   stageTintStyle,
   type PipelineStage,
+  type TopDemoStage,
 } from "@/lib/pipeline";
 import { PipelineBoard, type BoardLead } from "./pipeline-board";
 
@@ -160,6 +164,25 @@ export default async function NichePipelinePage({
         </div>
       </div>
 
+      {/* Top demo (niche flagship) */}
+      <h2 className="ld-section-h">
+        Top <em>demo</em>
+        <span className="ld-meta">one shared flagship for this niche</span>
+      </h2>
+      <TopDemoCard
+        nicheId={niche.id}
+        city={city}
+        slug={slug}
+        topDemoUrl={niche.topDemoUrl}
+        topDemoStage={
+          isTopDemoStage(niche.topDemoStage)
+            ? niche.topDemoStage
+            : "not_started"
+        }
+        topDemoDesignAngle={niche.topDemoDesignAngle}
+        topDemoReviewedAt={niche.topDemoReviewedAt}
+      />
+
       {/* Stage strip */}
       <h2 className="ld-section-h">
         By <em>stage</em>
@@ -211,5 +234,98 @@ export default async function NichePipelinePage({
       </h2>
       <PipelineBoard initialLeads={boardLeads} />
     </div>
+  );
+}
+
+function TopDemoCard({
+  nicheId,
+  city,
+  slug,
+  topDemoUrl,
+  topDemoStage,
+  topDemoDesignAngle,
+  topDemoReviewedAt,
+}: {
+  nicheId: string;
+  city: string;
+  slug: string;
+  topDemoUrl: string | null;
+  topDemoStage: TopDemoStage;
+  topDemoDesignAngle: string | null;
+  topDemoReviewedAt: Date | null;
+}) {
+  const colors = TOP_DEMO_STAGE_COLORS[topDemoStage];
+  const stageLabel = TOP_DEMO_STAGE_LABELS[topDemoStage];
+  const reviewedLine = topDemoReviewedAt
+    ? `reviewed ${new Date(topDemoReviewedAt).toLocaleDateString()}`
+    : "not reviewed yet";
+
+  return (
+    <Link
+      href={`/pipeline/${city}/${slug}/top-demo`}
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr auto",
+        gap: 24,
+        alignItems: "center",
+        padding: "20px 24px",
+        borderRadius: 14,
+        background: colors.accentSoft,
+        border: "1px solid var(--line)",
+        textDecoration: "none",
+        color: "inherit",
+        marginBottom: 28,
+      }}
+      data-niche-id={nicheId}
+    >
+      <div>
+        <div
+          style={{
+            fontSize: 11,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: colors.accent,
+            fontWeight: 600,
+            marginBottom: 6,
+          }}
+        >
+          Niche flagship · {stageLabel}
+        </div>
+        <div
+          style={{
+            fontFamily: "var(--font-fraunces), serif",
+            fontSize: 24,
+            fontWeight: 500,
+            lineHeight: 1.2,
+            marginBottom: 6,
+          }}
+        >
+          {topDemoUrl ? (
+            <>
+              Live at <em>{topDemoUrl}</em>
+            </>
+          ) : (
+            <em>No flagship URL set</em>
+          )}
+        </div>
+        <div style={{ fontSize: 13, color: "var(--muted)" }}>
+          {topDemoDesignAngle
+            ? topDemoDesignAngle
+            : "No design angle yet — review the flagship to lock one in."}
+          {" · "}
+          {reviewedLine}
+        </div>
+      </div>
+      <div
+        style={{
+          fontSize: 13,
+          fontWeight: 500,
+          color: colors.accent,
+          whiteSpace: "nowrap",
+        }}
+      >
+        Open review →
+      </div>
+    </Link>
   );
 }
