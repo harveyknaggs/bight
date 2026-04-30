@@ -110,9 +110,9 @@ export default async function DashboardPage() {
       {/* Quick actions */}
       <h2 className="ld-section-h">
         Quick <em>actions</em>
-        <span className="ld-meta">2 things to do next</span>
+        <span className="ld-meta">3 things to do next</span>
       </h2>
-      <div className="ld-pair">
+      <div className="ld-pair" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
         <Link href="/leads" className="ld-big-card t-demo" style={{ textDecoration: "none" }}>
           <div className="ld-head">
             <span className="ld-idx">01</span>
@@ -151,9 +151,50 @@ export default async function DashboardPage() {
           </div>
         </Link>
 
-        <Link href="/import" className="ld-big-card t-review" style={{ textDecoration: "none" }}>
+        <Link href="/pricing" className="ld-big-card t-pipe" style={{ textDecoration: "none" }}>
           <div className="ld-head">
             <span className="ld-idx">02</span>
+            <span className="ld-badge">
+              <span className="ld-pip" />
+              draft
+            </span>
+          </div>
+          <div className="ld-well">
+            <svg width="170" height="130" viewBox="0 0 170 130" fill="none">
+              {/* Back tag (lighter) */}
+              <g className="ld-liftA">
+                <path d="M28 32 L 70 32 L 88 50 L 88 108 L 28 108 Z" fill="#fff" stroke="#c8e3d2" strokeWidth="1.5" strokeLinejoin="round" />
+                <circle cx="74" cy="42" r="4" fill="#fff" stroke="#c8e3d2" strokeWidth="1.5" />
+                <text x="50" y="78" textAnchor="middle" fontSize="22" fontWeight="800" fill="#1f6f4a" fontFamily="system-ui, sans-serif">$</text>
+              </g>
+              {/* Front tag (dark, primary) */}
+              <g className="ld-liftC">
+                <path d="M70 18 L 124 18 L 148 42 L 148 110 L 70 110 Z" fill="#1f6f4a" stroke="#14523a" strokeWidth="1.5" strokeLinejoin="round" />
+                <circle cx="128" cy="30" r="5" fill="#14523a" stroke="#14523a" strokeWidth="1.5" />
+                <text x="106" y="74" textAnchor="middle" fontSize="20" fontWeight="800" fill="#fff" fontFamily="system-ui, sans-serif">$1,995</text>
+                <text x="106" y="94" textAnchor="middle" fontSize="11" fontWeight="600" fill="#d4f0e2" fontFamily="system-ui, sans-serif">+$49/mo</text>
+              </g>
+            </svg>
+          </div>
+          <h3>Pricing plan</h3>
+          <p className="ld-desc">
+            Setup fee plus monthly hosting tiers, what each fee includes, the
+            cold outreach pitch, and Year 1 maths.
+          </p>
+          <div className="ld-foot">
+            <span className="ld-ct">$1,995 + $49/mo default</span>
+            <span className="ld-cta">
+              View plan{" "}
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </span>
+          </div>
+        </Link>
+
+        <Link href="/import" className="ld-big-card t-review" style={{ textDecoration: "none" }}>
+          <div className="ld-head">
+            <span className="ld-idx">03</span>
             <span className="ld-badge">
               <span className="ld-pip" />
               run anytime

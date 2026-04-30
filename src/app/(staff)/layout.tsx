@@ -8,6 +8,7 @@ const staffNav = [
   { href: "/pipeline", label: "Pipeline" },
   { href: "/batch", label: "Batch" },
   { href: "/import", label: "Import" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 export default async function StaffLayout({ children }: { children: React.ReactNode }) {
