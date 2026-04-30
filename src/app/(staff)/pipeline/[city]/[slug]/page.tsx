@@ -261,8 +261,7 @@ function TopDemoCard({
     : "not reviewed yet";
 
   return (
-    <Link
-      href={`/pipeline/${city}/${slug}/top-demo`}
+    <div
       style={{
         display: "grid",
         gridTemplateColumns: "1fr auto",
@@ -272,8 +271,6 @@ function TopDemoCard({
         borderRadius: 14,
         background: colors.accentSoft,
         border: "1px solid var(--line)",
-        textDecoration: "none",
-        color: "inherit",
         marginBottom: 28,
       }}
       data-niche-id={nicheId}
@@ -302,7 +299,19 @@ function TopDemoCard({
         >
           {topDemoUrl ? (
             <>
-              Live at <em>{topDemoUrl}</em>
+              Live at{" "}
+              <a
+                href={topDemoUrl}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  color: colors.accent,
+                  textDecoration: "underline",
+                  fontStyle: "italic",
+                }}
+              >
+                {topDemoUrl}
+              </a>
             </>
           ) : (
             <em>No flagship URL set</em>
@@ -316,16 +325,41 @@ function TopDemoCard({
           {reviewedLine}
         </div>
       </div>
-      <div
-        style={{
-          fontSize: 13,
-          fontWeight: 500,
-          color: colors.accent,
-          whiteSpace: "nowrap",
-        }}
-      >
-        Open review →
+      <div style={{ display: "flex", gap: 10, whiteSpace: "nowrap" }}>
+        {topDemoUrl ? (
+          <a
+            href={topDemoUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              padding: "8px 14px",
+              borderRadius: 8,
+              border: `1px solid ${colors.accent}`,
+              background: "#fff",
+              color: colors.accent,
+              textDecoration: "none",
+            }}
+          >
+            Preview ↗
+          </a>
+        ) : null}
+        <Link
+          href={`/pipeline/${city}/${slug}/top-demo`}
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            padding: "8px 14px",
+            borderRadius: 8,
+            background: colors.accent,
+            color: "#fff",
+            textDecoration: "none",
+          }}
+        >
+          Open review →
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }
