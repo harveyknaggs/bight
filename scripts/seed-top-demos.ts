@@ -20,10 +20,10 @@ const SEEDS: SeedSpec[] = [
   {
     city: "christchurch",
     slug: "hairdressers",
-    topDemoUrl: "/my-site/afg/index.html",
+    topDemoUrl: "/my-site/v2/afg/index.html",
     topDemoStage: "live",
     topDemoDesignAngle:
-      "AFG-style interactive flagship: bold hero, scrolling sections, salon imagery.",
+      "AFG-style interactive flagship: video hero, scroll-pinned stage2, salon imagery.",
   },
 ];
 
