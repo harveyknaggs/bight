@@ -111,13 +111,13 @@ export default async function TopDemoReviewPage({
 
         <Field
           label="Demo URL"
-          hint="The single URL every cold email links to."
+          hint="The single URL every cold email links to. Absolute or relative (e.g. /my-site/afg/index.html)."
         >
           <input
-            type="url"
+            type="text"
             name="topDemoUrl"
             defaultValue={niche.topDemoUrl ?? ""}
-            placeholder="https://hairdressers.rapidrefresh.co"
+            placeholder="/my-site/afg/index.html"
             style={inputStyle}
           />
         </Field>
